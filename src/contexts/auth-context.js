@@ -4,13 +4,15 @@ import PropTypes from 'prop-types';
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
   SIGN_IN: 'SIGN_IN',
-  SIGN_OUT: 'SIGN_OUT'
+  SIGN_OUT: 'SIGN_OUT',
+  ROLES: 'ROLES',
 };
 
 const initialState = {
   isAuthenticated: false,
   isLoading: true,
-  user: null
+  user: null,
+  roles: null
 };
 
 const handlers = {
@@ -48,6 +50,14 @@ const handlers = {
       isAuthenticated: false,
       user: null
     };
+  },
+  [HANDLERS.ROLES]: (state, action) => {
+    const roles = action.payload;
+    return {
+      ...state,
+      isAuthenticated: false,
+      roles
+    }
   }
 };
 
@@ -81,16 +91,9 @@ export const AuthProvider = (props) => {
     }
 
     if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
-
       dispatch({
         type: HANDLERS.INITIALIZE,
-        payload: user
+        payload: undefined
       });
     } else {
       dispatch({
@@ -127,27 +130,27 @@ export const AuthProvider = (props) => {
     });
   };
 
-  const signIn = async (email, password) => {
-    if (email !== 'demo@devias.io' || password !== 'Password123!') {
-      throw new Error('Please check your email and password');
-    }
+  const signIn = async (data) => {
 
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
+    window.sessionStorage.setItem('authenticated', 'true');
 
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
+    // const user = {
+    //   id: data.item.user.id,
+    //   avatar: '/assets/avatars/avatar-anika-visser.png',
+    //   name: data.item.user.email.split('@')[0],
+    //   email: data.item.user.email
+    // };
 
     dispatch({
       type: HANDLERS.SIGN_IN,
-      payload: user
+      payload: data,
+    });
+  };
+
+  const setRoles = async (roles) => {
+    dispatch({
+      type: HANDLERS.ROLES,
+      payload: roles,
     });
   };
 
@@ -156,6 +159,7 @@ export const AuthProvider = (props) => {
   };
 
   const signOut = () => {
+    window.sessionStorage.setItem('authenticated', 'false');
     dispatch({
       type: HANDLERS.SIGN_OUT
     });
@@ -168,7 +172,8 @@ export const AuthProvider = (props) => {
         skip,
         signIn,
         signUp,
-        signOut
+        signOut,
+        setRoles
       }}
     >
       {children}

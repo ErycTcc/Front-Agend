@@ -6,6 +6,8 @@ import * as Yup from 'yup';
 import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+import { DEFAULT } from 'src/libs/global/constants';
+import { http } from 'src/utils/http';
 
 const Page = () => {
   const router = useRouter();
@@ -13,29 +15,42 @@ const Page = () => {
   const formik = useFormik({
     initialValues: {
       email: '',
-      name: '',
+      // name: '',
       password: '',
+      cpf: '',
       submit: null
     },
     validationSchema: Yup.object({
+      cpf: Yup
+        .string()
+        .max(11)
+        .required('CPF é um campo obrigatório'),
       email: Yup
         .string()
-        .email('Must be a valid email')
-        .max(255)
-        .required('Email is required'),
-      name: Yup
-        .string()
-        .max(255)
-        .required('Name is required'),
+        .email('Deve ser um email válido')
+        .max(32)
+        .required('Email é um campo obrigatório'),
+      // name: Yup
+      //   .string()
+      //   .max(16)
+      //   .required('Nome é um campo obrigatório'),
       password: Yup
         .string()
-        .max(255)
-        .required('Password is required')
+        .max(32)
+        .required('Senha é um campo obrigatório')
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await auth.signUp(values.email, values.name, values.password);
-        router.push('/');
+        await http(DEFAULT.ENDPOINT.REGISTER, {
+          method: DEFAULT.METHOD.POST,
+          body: new URLSearchParams({
+            email: values.email,
+            senha: values.password,
+            cpf: values.cpf,
+            tipo_usuarios_id: 1
+          })
+        })
+        router.push('/auth/login');
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
@@ -96,7 +111,7 @@ const Page = () => {
               onSubmit={formik.handleSubmit}
             >
               <Stack spacing={3}>
-                <TextField
+                {/* <TextField
                   error={!!(formik.touched.name && formik.errors.name)}
                   fullWidth
                   helperText={formik.touched.name && formik.errors.name}
@@ -105,7 +120,7 @@ const Page = () => {
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   value={formik.values.name}
-                />
+                /> */}
                 <TextField
                   error={!!(formik.touched.email && formik.errors.email)}
                   fullWidth
@@ -116,6 +131,17 @@ const Page = () => {
                   onChange={formik.handleChange}
                   type="email"
                   value={formik.values.email}
+                />
+                <TextField
+                  error={!!(formik.touched.cpf && formik.errors.cpf)}
+                  fullWidth
+                  helperText={formik.touched.cpf && formik.errors.cpf}
+                  label="CPF"
+                  name="cpf"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  type="text"
+                  value={formik.values.cpf}
                 />
                 <TextField
                   error={!!(formik.touched.password && formik.errors.password)}

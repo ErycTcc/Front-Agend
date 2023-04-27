@@ -18,32 +18,54 @@ import {
 } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+import { http } from 'src/utils/http';
+import { DEFAULT } from 'src/libs/global/constants';
 
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
-  const [method, setMethod] = useState('email');
+  const [method, setMethod] = useState('cpf');
   const formik = useFormik({
     initialValues: {
-      email: 'demo@devias.io',
-      password: 'Password123!',
+      email: '',
+      password: '',
       submit: null
     },
     validationSchema: Yup.object({
       email: Yup
         .string()
-        .email('Must be a valid email')
-        .max(255)
-        .required('Email is required'),
+        .max(40)
+        .required('Email é um campo obrigatório'),
       password: Yup
         .string()
         .max(255)
-        .required('Password is required')
+        .required('Senha é um campo obrigatório')
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await auth.signIn(values.email, values.password);
-        router.push('/');
+        const { item: { user } } = await http(
+          DEFAULT.ENDPOINT.LOGIN, {
+            method: DEFAULT.METHOD.POST,
+            body: new URLSearchParams({
+            email: values.email,
+            senha: values.password
+          })
+        });
+
+        const roles = await http(
+          DEFAULT.ENDPOINT.USER_TYPE, {
+            method: DEFAULT.METHOD.GET,
+          }
+        );
+
+        const { descricao } = roles.filter(item => item.id === user.tipo_usuarios_id)[0]
+
+        auth.setRoles(roles);
+        auth.signIn({ ...user, tipo_usuario: descricao });
+
+        if (descricao === 'secretario') router.push('/admin');
+        else if (descricao === 'medico') router.push('/colab');
+        else if (descricao === 'paciente') router.push('/personal');
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
@@ -51,21 +73,6 @@ const Page = () => {
       }
     }
   });
-
-  const handleMethodChange = useCallback(
-    (event, value) => {
-      setMethod(value);
-    },
-    []
-  );
-
-  const handleSkip = useCallback(
-    () => {
-      auth.skip();
-      router.push('/');
-    },
-    [auth, router]
-  );
 
   return (
     <>
@@ -115,21 +122,7 @@ const Page = () => {
                 </Link>
               </Typography>
             </Stack>
-            <Tabs
-              onChange={handleMethodChange}
-              sx={{ mb: 3 }}
-              value={method}
-            >
-              <Tab
-                label="Email"
-                value="email"
-              />
-              <Tab
-                label="Phone Number"
-                value="phoneNumber"
-              />
-            </Tabs>
-            {method === 'email' && (
+            {method === 'cpf' && (
               <form
                 noValidate
                 onSubmit={formik.handleSubmit}
@@ -139,7 +132,8 @@ const Page = () => {
                     error={!!(formik.touched.email && formik.errors.email)}
                     fullWidth
                     helperText={formik.touched.email && formik.errors.email}
-                    label="Email Address"
+                    label="Email"
+                    placeholder='example@example.com'
                     name="email"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
@@ -178,14 +172,6 @@ const Page = () => {
                   variant="contained"
                 >
                   Continue
-                </Button>
-                <Button
-                  fullWidth
-                  size="large"
-                  sx={{ mt: 3 }}
-                  onClick={handleSkip}
-                >
-                  Skip authentication
                 </Button>
                 <Alert
                   color="primary"

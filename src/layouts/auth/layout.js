@@ -2,11 +2,23 @@ import PropTypes from 'prop-types';
 import NextLink from 'next/link';
 import { Box, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 import { Logo } from 'src/components/logo';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useAuth } from 'src/hooks/use-auth';
 
 // TODO: Change subtitle text
 
 export const Layout = (props) => {
   const { children } = props;
+  const auth = useAuth();
+  const router = useRouter();
+
+  useEffect(
+    () => {
+      auth.signOut();
+    },
+    []
+  );
 
   return (
     <Box
@@ -22,7 +34,7 @@ export const Layout = (props) => {
       >
         <Grid
           xs={12}
-          lg={6}
+          lg={12}
           sx={{
             backgroundColor: 'background.paper',
             display: 'flex',
@@ -54,7 +66,7 @@ export const Layout = (props) => {
           </Box>
           {children}
         </Grid>
-        <Grid
+        {/* <Grid
           xs={12}
           lg={6}
           sx={{
@@ -100,7 +112,7 @@ export const Layout = (props) => {
               src="/assets/auth-illustration.svg"
             />
           </Box>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
   );
