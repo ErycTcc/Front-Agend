@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { DEFAULT } from 'src/libs/global/constants';
+import { http } from 'src/utils/http';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -158,8 +160,13 @@ export const AuthProvider = (props) => {
     throw new Error('Sign up is not implemented');
   };
 
-  const signOut = () => {
-    window.sessionStorage.setItem('authenticated', 'false');
+  const signOut = async () => {
+    await http(
+      DEFAULT.ENDPOINT.LOGOUT,
+      {
+        method: DEFAULT.METHOD.POST,
+      },
+    );
     dispatch({
       type: HANDLERS.SIGN_OUT
     });

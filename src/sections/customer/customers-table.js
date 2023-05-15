@@ -1,39 +1,43 @@
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import {
-  Avatar,
   Box,
+  Button,
   Card,
-  Checkbox,
-  Stack,
+  SvgIcon,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TablePagination,
   TableRow,
-  Typography
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
+import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 
-export const CustomersTable = (props) => {
-  const {
-    count = 0,
-    items = [],
-    onDeselectAll,
-    onDeselectOne,
-    onPageChange = () => {},
-    onRowsPerPageChange,
-    onSelectAll,
-    onSelectOne,
-    page = 0,
-    rowsPerPage = 0,
-    selected = []
-  } = props;
+export const CustomersTable = ({
+  count,
+  items,
+  onDeselectAll,
+  onDeselectOne,
+  onPageChange,
+  onRowsPerPageChange,
+  onSelectAll,
+  onSelectOne,
+  onClickRow,
+  setModal,
+  isActiveModal,
+  page,
+  rowsPerPage,
+  selected,
+  setUpdate,
+}) => {
+  const [keys, setRowKeys] = useState([]);
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  useEffect(() => {
+    if (items.length > 0) setRowKeys(Object.keys(items[0]));
+  }, [items]);
 
   return (
     <Card>
@@ -42,84 +46,48 @@ export const CustomersTable = (props) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedAll}
-                    indeterminate={selectedSome}
-                    onChange={(event) => {
-                      if (event.target.checked) {
-                        onSelectAll?.();
-                      } else {
-                        onDeselectAll?.();
-                      }
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Email
-                </TableCell>
-                <TableCell>
-                  Location
-                </TableCell>
-                <TableCell>
-                  Phone
-                </TableCell>
-                <TableCell>
-                  Signed Up
-                </TableCell>
+                {keys.map((item) => (
+                  <TableCell align="center">
+                    {item}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {items.map((customer) => {
-                const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+                const isSelected = selected.includes(customer[keys[0]]);
 
                 return (
                   <TableRow
                     hover
-                    key={customer.id}
+                    key={customer[keys[0]]}
                     selected={isSelected}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isSelected}
-                        onChange={(event) => {
-                          if (event.target.checked) {
-                            onSelectOne?.(customer.id);
-                          } else {
-                            onDeselectOne?.(customer.id);
-                          }
+                    {keys.map((key) => (
+                      <TableCell align="center">
+                        {
+                          key === 'created_at' || key === 'updated_at'
+                            ? format(new Date(customer[key]), 'dd/MM/yyyy')
+                            : customer[key].toString().toLowerCase()
+                        }
+                      </TableCell>
+                    ))}
+                    <TableCell align='center'>
+                      <Button
+                        color="inherit"
+                        startIcon={(
+                          <SvgIcon fontSize="small">
+                            <ArrowDownOnSquareIcon />
+                          </SvgIcon>
+                        )}
+                        onClick={() => {
+                          onClickRow(customer);
+                          setModal(!isActiveModal);
+                          setUpdate(true);
                         }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={2}
                       >
-                        <Avatar src={customer.avatar}>
-                          {getInitials(customer.name)}
-                        </Avatar>
-                        <Typography variant="subtitle2">
-                          {customer.name}
-                        </Typography>
-                      </Stack>
-                    </TableCell>
-                    <TableCell>
-                      {customer.email}
-                    </TableCell>
-                    <TableCell>
-                      {customer.address.city}, {customer.address.state}, {customer.address.country}
-                    </TableCell>
-                    <TableCell>
-                      {customer.phone}
-                    </TableCell>
-                    <TableCell>
-                      {createdAt}
+                        Ver informações
+                      </Button>
                     </TableCell>
                   </TableRow>
                 );

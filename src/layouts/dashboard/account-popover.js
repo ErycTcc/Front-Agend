@@ -12,7 +12,7 @@ export const AccountPopover = (props) => {
   const handleSignOut = useCallback(
     () => {
       onClose?.();
-      auth.signOut();
+      // auth.signOut();
       router.push('/auth/login');
     },
     [onClose, auth, router]

@@ -1,15 +1,24 @@
 export const DEFAULT = {
-    "ENDPOINT": {
-        "API_URL": "http://localhost:8000/api/",
-        "LOGIN": "login",
-        "REGISTER": "register",
-        "USER_TYPE": "tipo_usuario",
+    ENDPOINT: {
+        API_URL: "http://localhost:8000/api/",
+        LOGIN: "login",
+        LOGOUT: "logout",
+        MEDICO: "medico",
+        REGISTER: "register",
+        USER_TYPE: "tipo_usuario",
+        ENDERECO: "endereco",
+        PRONTUARIO: "prontuario",
+        ESPECIALIZACAO: "tipo_consulta",
+        FUNCOES: "tipo_usuario",
+        PACIENTE: "paciente",
+        AGENDA: "agenda",
+        CONSULTA: "consulta",
     },
-    "METHOD": {
-        "GET": "GET",
-        "POST": "POST",
-        "PUT": "PUT",
-        "PATCH": "PATCH",
-        "DELETE": "DELETE"
+    METHOD: {
+        GET: "GET",
+        POST: "POST",
+        PUT: "PUT",
+        PATCH: "PATCH",
+        DELETE: "DELETE"
     }
 }

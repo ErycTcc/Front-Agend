@@ -19,7 +19,7 @@ export const items = [
     )
   },
   {
-    title: 'Colaboradores',
+    title: 'Médicos',
     path: '/admin/medicos',
     icon: (
       <SvgIcon fontSize="small">
@@ -28,8 +28,44 @@ export const items = [
     )
   },
   {
-    title: 'Gerenciamento',
-    path: '/admin/gerenciamento',
+    title: 'Pacientes',
+    path: '/admin/pacientes',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Endereços',
+    path: '/admin/enderecos',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Especializações',
+    path: '/admin/especializacoes',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Prontuários',
+    path: '/admin/prontuarios',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Funções',
+    path: '/admin/funcoes',
     icon: (
       <SvgIcon fontSize="small">
         <ShoppingBagIcon />

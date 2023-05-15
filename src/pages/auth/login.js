@@ -43,7 +43,7 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        const { item: { user } } = await http(
+        const { item: { user, token } } = await http(
           DEFAULT.ENDPOINT.LOGIN, {
             method: DEFAULT.METHOD.POST,
             body: new URLSearchParams({
@@ -51,6 +51,8 @@ const Page = () => {
             senha: values.password
           })
         });
+
+        sessionStorage.setItem('token', token);
 
         const roles = await http(
           DEFAULT.ENDPOINT.USER_TYPE, {
@@ -106,7 +108,7 @@ const Page = () => {
               <Typography variant="h4">
                 Login
               </Typography>
-              <Typography
+              {/* <Typography
                 color="text.secondary"
                 variant="body2"
               >
@@ -120,7 +122,7 @@ const Page = () => {
                 >
                   Register
                 </Link>
-              </Typography>
+              </Typography> */}
             </Stack>
             {method === 'cpf' && (
               <form
@@ -152,9 +154,9 @@ const Page = () => {
                     value={formik.values.password}
                   />
                 </Stack>
-                <FormHelperText sx={{ mt: 1 }}>
+                {/* <FormHelperText sx={{ mt: 1 }}>
                   Optionally you can skip.
-                </FormHelperText>
+                </FormHelperText> */}
                 {formik.errors.submit && (
                   <Typography
                     color="error"
@@ -173,7 +175,7 @@ const Page = () => {
                 >
                   Continue
                 </Button>
-                <Alert
+                {/* <Alert
                   color="primary"
                   severity="info"
                   sx={{ mt: 3 }}
@@ -181,7 +183,7 @@ const Page = () => {
                   <div>
                     You can use <b>demo@devias.io</b> and password <b>Password123!</b>
                   </div>
-                </Alert>
+                </Alert> */}
               </form>
             )}
             {method === 'phoneNumber' && (

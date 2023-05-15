@@ -9,7 +9,6 @@ import { applyPagination } from 'src/utils/apply-pagination';
 import BasicModal from 'src/components/modal';
 import { DEFAULT } from 'src/libs/global/constants';
 import { http } from 'src/utils/http';
-import { useAuthContext } from 'src/contexts/auth-context';
 
 const useCustomers = (data, page, rowsPerPage) => {
   return useMemo(
@@ -34,11 +33,10 @@ const Page = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isOpen, setOpen] = useState(false);
   const [isModalUpdate, setModalUpdate] = useState(false);
-  const defaultRow = { id: 0, cpf: '', created_at: '', updated_at: '' };
+  const defaultRow = { id: 0, nome_familia: '', created_at: '', updated_at: '' };
   const [actualRow, setActualRow] = useState(defaultRow);
   const [list, setList] = useState([]);
   const [isUpdate, requestTableUpdate] = useState(false);
-  const { user: { cpf } } = useAuthContext();
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -55,7 +53,7 @@ const Page = () => {
   );
 
   const fetchData = useCallback(async () => {
-    setList(await http(`${DEFAULT.ENDPOINT.AGENDA}/${cpf}`, { method: DEFAULT.METHOD.GET }));
+    setList(await http(DEFAULT.ENDPOINT.PRONTUARIO, { method: DEFAULT.METHOD.GET }));
   }, [http, setList]);
 
   useEffect(() => {
@@ -70,7 +68,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Agenda | Agend Kit
+          Prontuarios | Agend Kit
         </title>
       </Head>
       <Box
@@ -89,7 +87,7 @@ const Page = () => {
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                  Agenda
+                  Prontuarios
                 </Typography>
               </Stack>
               <div>
@@ -136,7 +134,7 @@ const Page = () => {
               setModal={setOpen}
               isUpdate={isModalUpdate}
               setUpdate={setModalUpdate}
-              endpoint={DEFAULT.ENDPOINT.AGENDA}
+              endpoint={DEFAULT.ENDPOINT.PRONTUARIO}
               tableState={isUpdate}
               tableAtt={requestTableUpdate}
             />

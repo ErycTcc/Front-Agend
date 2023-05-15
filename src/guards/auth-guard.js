@@ -12,14 +12,6 @@ export const AuthGuard = (props) => {
   const [checked, setChecked] = useState(false);
   const pathname = (usePathname()).substring(1);
 
-  // Only do authentication check on component mount.
-  // This flow allows you to manually redirect the user after sign-out, otherwise this will be
-  // triggered and will automatically redirect to sign-in page.
-
-  useEffect(() => {
-    console.log(pathname);
-  }, [pathname]);
-
   useEffect(
     () => {
       if (!router.isReady) {
@@ -34,7 +26,6 @@ export const AuthGuard = (props) => {
       ignore.current = true;
 
       if (!isAuthenticated) {
-        console.log('Not authenticated, redirecting');
         router
           .replace({
             pathname: '/auth/login',

@@ -2,9 +2,11 @@ import PropTypes from 'prop-types';
 import NextLink from 'next/link';
 import { Box, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 import { Logo } from 'src/components/logo';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from 'src/hooks/use-auth';
+import { useAuthContext } from 'src/contexts/auth-context';
+import { usePathname } from 'next/navigation';
 
 // TODO: Change subtitle text
 
@@ -12,12 +14,20 @@ export const Layout = (props) => {
   const { children } = props;
   const auth = useAuth();
   const router = useRouter();
+  const isAuth = JSON.parse(sessionStorage.getItem('authenticated'));
+  const isToken = sessionStorage.getItem('token');
+  const path = usePathname();
+  const invalidate = useCallback(() => {
+    sessionStorage.setItem('authenticated', 'false');
+    auth.signOut();
+    sessionStorage.setItem('token', '');
+  }, [auth]);
 
   useEffect(
     () => {
-      auth.signOut();
+      if (isAuth && isToken && isToken !== '') invalidate();
     },
-    []
+    [path]
   );
 
   return (
