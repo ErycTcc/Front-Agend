@@ -4,9 +4,9 @@ import TableContainer from 'src/components/tableContainer';
 
 const Page = () => (
   <TableContainer
-    defaultRow={{ id: 0, descricao: '', created_at: '', updated_at: '' }}
-    endpoint={DEFAULT.ENDPOINT.ESPECIALIZACAO}
-    title="Especializações"
+    defaultRow={{ id: 0, descricao: '' }}
+    endpoint={DEFAULT.ENDPOINT.AGENDA}
+    title="Agendas"
     isFilter={false}
   />
 );

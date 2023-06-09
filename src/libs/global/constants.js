@@ -11,6 +11,8 @@ export const DEFAULT = {
         ESPECIALIZACAO: "tipo_consulta",
         FUNCOES: "tipo_usuario",
         PACIENTE: "paciente",
+        USUARIO: "usuario",
+        AGENDA_MEDICO: "agenda_medico",
         AGENDA: "agenda",
         CONSULTA: "consulta",
     },
