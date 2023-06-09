@@ -47,7 +47,7 @@ const Page = () => {
             email: values.email,
             senha: values.password,
             cpf: values.cpf,
-            tipo_usuarios_id: 5
+            tipo_usuarios_id: 4
           })
         })
         router.push('/auth/login');
