@@ -6,7 +6,6 @@ export const DEFAULT = {
         MEDICO: "medico",
         REGISTER: "register",
         USER_TYPE: "tipo_usuario",
-        ENDERECO: "endereco",
         PRONTUARIO: "prontuario",
         ESPECIALIZACAO: "tipo_consulta",
         FUNCOES: "tipo_usuario",

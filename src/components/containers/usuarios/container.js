@@ -6,8 +6,8 @@ import {
     SvgIcon,
     Typography
 } from '@mui/material';
-import { CustomersTable } from 'src/sections/customer/customers-table';
-import {
+import CustomersTable from './table';
+import React, {
     memo,
     useState,
     useCallback,

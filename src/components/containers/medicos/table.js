@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import {
@@ -9,14 +9,14 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TablePagination,
   TableRow,
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
+import { Columns } from './columns';
 
-export const CustomersTable = ({
+const CustomersTable = ({
   count,
   items,
   onDeselectAll,
@@ -36,7 +36,7 @@ export const CustomersTable = ({
   const [keys, setRowKeys] = useState([]);
 
   useEffect(() => {
-    if (items.length > 0) setRowKeys(Object.keys(items[0]));
+    if (items?.length > 0) setRowKeys(Object.keys(items[0]));
   }, [items]);
 
   return (
@@ -44,34 +44,16 @@ export const CustomersTable = ({
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
-            <TableHead>
-              <TableRow>
-                {keys.map((item, index) => (
-                  <TableCell key={index} align="center">
-                    {item}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
+            <Columns />
             <TableBody>
-              {items.map((customer, index) => {
+              {items?.map((customer, index) => {
                 const isSelected = selected.includes(customer[keys[0]]);
-
                 return (
                   <TableRow
                     hover
                     key={index}
                     selected={isSelected}
                   >
-                    {keys.map((key, index) => (
-                      <TableCell key={index} align="center">
-                        {
-                          key === 'created_at' || key === 'updated_at'
-                            ? format(new Date(customer[key]), 'dd/MM/yyyy')
-                            : customer[key].toString().toLowerCase()
-                        }
-                      </TableCell>
-                    ))}
                     <TableCell align='center'>
                       <Button
                         color="inherit"
@@ -122,3 +104,5 @@ CustomersTable.propTypes = {
   rowsPerPage: PropTypes.number,
   selected: PropTypes.array
 };
+
+export default CustomersTable;

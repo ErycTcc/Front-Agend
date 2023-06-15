@@ -1,12 +1,12 @@
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { DEFAULT } from 'src/libs/global/constants';
-import TableContainer from 'src/components/tableContainer';
+import TableContainer from 'src/components/containers/prontuario/container';
 
 const Page = () => (
   <TableContainer
-    defaultRow={{ id: 0, pais: '', estado: '', cidade: '', bairro: '', rua: '', numero: 0, created_at: '', updated_at: '' }}
-    endpoint={DEFAULT.ENDPOINT.ENDERECO}
-    title="Endereços"
+    defaultRow={{ id: 0, nome_familia: '', created_at: '', updated_at: '' }}
+    endpoint={DEFAULT.ENDPOINT.PRONTUARIO}
+    title="Prontuários"
     isFilter={false}
   />
 );

@@ -5,8 +5,15 @@ import { Grid, Stack, TextField, Button, SvgIcon } from '@mui/material';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { DEFAULT } from 'src/libs/global/constants';
+import { formatarCPF } from 'src/libs/global/formatCPF';
 import { format } from 'date-fns';
 import { http } from 'src/utils/http';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import { DatePicker } from '@mui/x-date-pickers';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
 const style = {
   position: 'absolute',
@@ -36,10 +43,24 @@ export default function BasicModal({
   tableAtt,
 }) {
   const handleOpen = () => setModal(true);
-  const handleClose = () => { setUpdate(!isUpdate); setModal(false); };
+  const handleClose = () => {
+    if (isUpdate) destroyData();
+    setUpdate(!isUpdate); setModal(false);
+  };
   const [getForm, setForm] = useState(row);
   const [keys, setKeys] = useState([]);
   const [getData, setData] = useState([]);
+  const [error, setError] = useState('');
+
+  const destroyData = async () => {
+    await http(
+      `${endpoint}/${getForm.id}`,
+      {
+        method: DEFAULT.METHOD.DELETE,
+        body: new URLSearchParams(getForm),
+      });
+    tableAtt(!tableState);
+  };
   const saveData = async () => {
     await http(
       isUpdate ? `${endpoint}/${getForm.id}` : endpoint,
@@ -52,40 +73,24 @@ export default function BasicModal({
   };
 
   const handlerForm = useCallback((item, event) => {
-    setForm({ ...getForm, [item]: event.target.value })
+    setForm({ ...getForm, [item]: event })
   }, [getForm, setForm]);
 
-  const fetchSelect = useCallback(async (url, item) => {
-    const res = await http(url, { method: DEFAULT.METHOD.GET });
-    if (res?.length > 0) {
-      setData((data) => {
-        const newData = [...data];
-        newData[item] = res;
-        return newData;
-      });
-    }
-  }, []);
+  // const fetchSelect = useCallback(async () => {
+  //   const res = await http(DEFAULT.ENDPOINT.AGENDA, { method: DEFAULT.METHOD.GET });
+  //   if (res?.length > 0) setData(res);
+  // }, [setData]);
 
-  useEffect(() => {
-    if (row) {
-      const values = Object.keys(row);
-      setKeys(values);
-      values.forEach((item, index) => {
-        if (item.includes('_id')) {
-          const actualKey = splitWord(item);
-          fetchSelect(actualKey, index)
-            .then(() => {
-              setForm((form) => {
-                const newForm = { ...form };
-                newForm[item] = getData[index];
-                return newForm;
-              });
-            })
-            .catch(() => console.log('deu errado'));
-        }
-      });
+  // useEffect(() => {
+  //   if (row) fetchSelect().catch(() => console.log('deu errado'));
+  // }, [row, fetchSelect]);
+
+  const validateCPF = (value) => {
+    if (value.length !== 14) {
+      return 'CPF deve conter 11 caracteres';
     }
-  }, [row, fetchSelect]);
+    return '';
+  };
 
   return (
     <div>
@@ -104,40 +109,14 @@ export default function BasicModal({
         >
           <h2 id="modal-title">{row.name || 'Cadastro'}</h2>
           <Grid container spacing={1}>
-            <Grid item xs={6} lg={6}>
-              {
-                keys.map((item, index) => (
-                  <div key={index}>
-                    {item.includes('_id') ? (
-                      getData[index]?.length > 0 && (
-                        <>
-                          <label htmlFor="first-name">
-                            {splitWord(item).replace('_', ' ')}
-                          </label>
-                          <div className="mt-2">
-                            <select onChange={(event) => setForm({ ...getForm, [item]: event.currentTarget.value })}>
-                                {getData[index].map((option) => (
-                                    <option key={option.id} value={option.id}>
-                                    {option.descricao || option.email}
-                                    </option>
-                                ))}
-                            </select>
-                          </div>
-                        </>
-                      )
-                    ) : (
-                      <TextField
-                        id="standard-basic"
-                        label={item}
-                        variant="standard"
-                        disabled={item === 'id' || item === 'created_at' || item === 'updated_at'}
-                        onChange={(event) => handlerForm(item, event)}
-                        value={getForm[item] === 0 || getForm[item] === '' ? '' : getForm[item]}
-                      />
-                    )}
-                  </div>
-                ))
-              }
+            <Grid item xs={12} lg={12}>
+              <TextField
+                id="standard-basic"
+                label="Descrição"
+                variant="standard"
+                fullWidth
+                onChange={(event) => handlerForm('descricao', event.target.value)}
+              />
             </Grid>
             <Grid item>
               <Stack
@@ -166,7 +145,7 @@ export default function BasicModal({
                   )}
                   onClick={handleClose}
                 >
-                  Cancelar
+                  {isUpdate ? 'Excluir' : 'Cancelar'}
                 </Button>
               </Stack>
             </Grid>

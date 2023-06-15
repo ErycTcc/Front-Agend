@@ -65,15 +65,6 @@ export const items =
     )
   },
   {
-    title: 'Endereços',
-    path: '/admin/enderecos',
-    icon: (
-      <SvgIcon fontSize="small">
-        <UsersIcon />
-      </SvgIcon>
-    )
-  },
-  {
     title: 'Especializações',
     path: '/admin/especializacoes',
     icon: (
@@ -110,7 +101,7 @@ export const items =
     )
   },
   {
-    title: 'Agendar consulta',
+    title: 'Agendas disponíveis',
     path: '/personal/agendar',
     icon: (
       <SvgIcon fontSize="small">
