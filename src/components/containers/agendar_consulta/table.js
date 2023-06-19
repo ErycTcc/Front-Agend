@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import {
@@ -14,11 +14,11 @@ import {
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { formatarCPF } from 'src/libs/global/formatCPF';
-import { formatarNumeroCelular } from 'src/libs/global/formatPhone';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import { Columns } from './columns';
 import { DEFAULT } from 'src/libs/global/constants';
 import { http } from 'src/utils/http';
+import { useAuthContext } from 'src/contexts/auth-context';
 
 const CustomersTable = ({
   count,
@@ -38,21 +38,33 @@ const CustomersTable = ({
   setUpdate,
 }) => {
   const [keys, setRowKeys] = useState([]);
-  const [getEspecialidades, setEspecialidades] = useState({});
-  
-  const fetchEspecialidade = useCallback(async () => {
-    const res = await http(DEFAULT.ENDPOINT.ESPECIALIZACAO, { method: DEFAULT.METHOD.GET });
-    let obj = {};
-    res?.forEach(item => {
-      obj[item.id] = item.descricao;
-    });
-    if (res?.length > 0) setEspecialidades(obj);
-  }, [setEspecialidades]);
+  const { user: { cpf } } = useAuthContext();
+
+  const saveData = async (row) => {
+    await http(
+      `${DEFAULT.ENDPOINT.AGENDA_MEDICO}/${row.id}`,
+      {
+        method: DEFAULT.METHOD.PUT,
+        body: new URLSearchParams({ status: 1 }),
+      });
+    await http(
+      DEFAULT.ENDPOINT.CONSULTA,
+      {
+        method: DEFAULT.METHOD.POST,
+        body: new URLSearchParams({
+          descricao: 'agendamento',
+          agendamento: format(new Date(), 'yyyy-MM-dd'),
+          status: 'agendado',
+          cpf_medico: row.cpf,
+          cpf_paciente: cpf,
+          agenda_id: row.agenda_id,
+        }),
+      });
+  };
   
   useEffect(() => {
     if (items?.length > 0) setRowKeys(Object.keys(items[0]));
-    fetchEspecialidade().catch(() => console.log('Erro ao buscar especialidades.'));
-  }, [items, fetchEspecialidade]);
+  }, [items]);
 
   return (
     <Card>
@@ -69,12 +81,11 @@ const CustomersTable = ({
                     key={index}
                     selected={isSelected}
                   >
-                    <TableCell align='center'>{formatarCPF(customer.cpf)}</TableCell>
-                    <TableCell align='center'>{customer.nome}</TableCell>
-                    <TableCell align='center'>{formatarNumeroCelular(customer.telefone)}</TableCell>
-                    <TableCell align='center'>{customer.genero}</TableCell>
-                    <TableCell align='center'>{customer.crm}</TableCell>
-                    <TableCell align='center'>{getEspecialidades[customer.tipo_consulta_id] || 'Carregando...'}</TableCell>
+                    <TableCell align='center'>{customer.agendas.descricao}</TableCell>
+                    <TableCell align='center'>{customer.medicos.nome}</TableCell>
+                    <TableCell align='center'>{format(new Date(customer.data), 'dd/MM/yyyy')}</TableCell>
+                    <TableCell align='center'>{customer.hora_inicio}</TableCell>
+                    <TableCell align='center'>{customer.hora_termino}</TableCell>
                     <TableCell align='center'>
                       <Button
                         color="inherit"
@@ -83,13 +94,9 @@ const CustomersTable = ({
                             <ArrowDownOnSquareIcon />
                           </SvgIcon>
                         )}
-                        onClick={() => {
-                          onClickRow(customer);
-                          setModal(!isActiveModal);
-                          setUpdate(true);
-                        }}
+                        onClick={() => saveData(customer)}
                       >
-                        Ver informações
+                        Agendar
                       </Button>
                     </TableCell>
                   </TableRow>

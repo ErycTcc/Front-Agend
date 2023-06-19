@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
+import { formatarCPF } from 'src/libs/global/formatCPF';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import { Columns } from './columns';
 
@@ -54,6 +55,11 @@ const CustomersTable = ({
                     key={index}
                     selected={isSelected}
                   >
+                    <TableCell align='center'>{customer.agendas.descricao}</TableCell>
+                    <TableCell align='center'>{formatarCPF(customer.cpf)}</TableCell>
+                    <TableCell align='center'>{customer.data}</TableCell>
+                    <TableCell align='center'>{customer.hora_inicio}</TableCell>
+                    <TableCell align='center'>{customer.hora_termino}</TableCell>
                     <TableCell align='center'>
                       <Button
                         color="inherit"

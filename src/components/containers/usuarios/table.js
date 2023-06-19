@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
+import { formatarCPF } from 'src/libs/global/formatCPF';
 import {
   Box,
   Button,
@@ -68,7 +69,7 @@ const CustomersTable = ({
                     selected={isSelected}
                   >
                     <TableCell align='center'>{customer.email}</TableCell>
-                    <TableCell align='center'>{customer.cpf}</TableCell>
+                    <TableCell align='center'>{formatarCPF(customer.cpf)}</TableCell>
                     <TableCell align='center'>
                       {getEspecialidades[customer.tipo_usuarios_id] || 'Carregando...'}
                     </TableCell>

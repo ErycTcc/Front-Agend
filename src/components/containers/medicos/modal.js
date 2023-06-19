@@ -6,6 +6,7 @@ import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIc
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { DEFAULT } from 'src/libs/global/constants';
 import { formatarCPF } from 'src/libs/global/formatCPF';
+import { formatarNumeroCelular } from 'src/libs/global/formatPhone';
 import { format } from 'date-fns';
 import { http } from 'src/utils/http';
 import InputLabel from '@mui/material/InputLabel';
@@ -44,7 +45,6 @@ export default function BasicModal({
 }) {
   const handleOpen = () => setModal(true);
   const handleClose = () => {
-    if (isUpdate) destroyData();
     setUpdate(!isUpdate); setModal(false);
   };
   const [getForm, setForm] = useState(row);
@@ -148,9 +148,10 @@ export default function BasicModal({
                 id="standard-basic"
                 label="Telefone"
                 variant="standard"
+                inputProps={{ maxLength: 14 }}
                 fullWidth
                 onChange={(event) => handlerForm('telefone', event.target.value)}
-                value={getForm['telefone'] || ''}
+                value={formatarNumeroCelular(getForm['telefone']) || ''}
               />
               <TextField
                 id="standard-basic"
@@ -164,6 +165,7 @@ export default function BasicModal({
                 id="standard-basic"
                 label="CRM"
                 variant="standard"
+                inputProps={{ maxLength: 6 }}
                 fullWidth
                 onChange={(event) => handlerForm('crm', event.target.value)}
                 value={getForm['crm'] || ''}
@@ -174,7 +176,7 @@ export default function BasicModal({
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="Especialidades disponíveis"
-                  onChange={(event) => handlerForm('agenda_id', event.target.value)}
+                  onChange={(event) => handlerForm('tipo_consulta_id', event.target.value)}
                 >
                   {getEspecialidades.map((option, index) => (
                     <MenuItem key={index} value={option?.id}>{option?.descricao}</MenuItem>
@@ -187,7 +189,7 @@ export default function BasicModal({
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="Usuários do sistema"
-                  onChange={(event) => handlerForm('agenda_id', event.target.value)}
+                  onChange={(event) => handlerForm('usuario_sistema_id', event.target.value)}
                 >
                   {getUsuarios.map((option, index) => (
                     <MenuItem key={index} value={option?.id}>{option?.email}</MenuItem>
@@ -220,7 +222,7 @@ export default function BasicModal({
                       <ArrowDownOnSquareIcon />
                     </SvgIcon>
                   )}
-                  onClick={handleClose}
+                  onClick={isUpdate ? destroyData : handleClose}
                 >
                   {isUpdate ? 'Excluir' : 'Cancelar'}
                 </Button>

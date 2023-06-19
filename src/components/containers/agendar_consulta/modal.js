@@ -76,10 +76,7 @@ export default function BasicModal({
   }, [getForm, setForm]);
 
   const fetchSelect = useCallback(async () => {
-    const res = [
-      await http(DEFAULT.ENDPOINT.AGENDA, { method: DEFAULT.METHOD.GET }),
-      await http(DEFAULT.ENDPOINT.MEDICO, { method: DEFAULT.METHOD.GET })
-    ];
+    const res = await http(DEFAULT.ENDPOINT.AGENDA, { method: DEFAULT.METHOD.GET });
     if (res?.length > 0) setData(res);
   }, [setData]);
 
@@ -112,7 +109,7 @@ export default function BasicModal({
           <h2 id="modal-title">{row.name || 'Cadastro'}</h2>
           <Grid container spacing={1}>
             <Grid item xs={12} lg={12}>
-              {/* <TextField
+              <TextField
                 id="standard-basic"
                 label="CPF"
                 variant="standard"
@@ -127,7 +124,7 @@ export default function BasicModal({
                 value={formatarCPF(getForm['cpf']) || ''}
                 error={Boolean(error)}
                 helperText={error}
-              /> */}
+              />
               <DatePicker
                 label="Data"
                 mask="__/__/____"
@@ -174,19 +171,6 @@ export default function BasicModal({
                 )}
               />
               <FormControl fullWidth sx={{ marginTop: '10px' }}>
-                <InputLabel id="demo-simple-select-label">Médicos disponíveis</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Médicos disponíveis"
-                  onChange={(event) => handlerForm('cpf', event.target.value)}
-                >
-                  {(getData[1] ?? []).map((option, index) => (
-                    <MenuItem key={index} value={option?.cpf}>{option?.nome}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl fullWidth sx={{ marginTop: '10px' }}>
                 <InputLabel id="demo-simple-select-label">Agendas disponíveis</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
@@ -194,8 +178,8 @@ export default function BasicModal({
                   label="Agendas disponíveis"
                   onChange={(event) => handlerForm('agenda_id', event.target.value)}
                 >
-                  {(getData[0] ?? []).map((option, index) => (
-                    <MenuItem key={index} value={option?.id}>{option?.descricao}</MenuItem> 
+                  {getData.map((option, index) => (
+                    <MenuItem key={index} value={option?.id}>{option?.descricao}</MenuItem>
                   ))}
                 </Select>
               </FormControl>

@@ -76,10 +76,7 @@ export default function BasicModal({
   }, [getForm, setForm]);
 
   const fetchSelect = useCallback(async () => {
-    const res = [
-      await http(DEFAULT.ENDPOINT.AGENDA, { method: DEFAULT.METHOD.GET }),
-      await http(DEFAULT.ENDPOINT.MEDICO, { method: DEFAULT.METHOD.GET })
-    ];
+    const res = await http(DEFAULT.ENDPOINT.AGENDA, { method: DEFAULT.METHOD.GET });
     if (res?.length > 0) setData(res);
   }, [setData]);
 
@@ -112,9 +109,9 @@ export default function BasicModal({
           <h2 id="modal-title">{row.name || 'Cadastro'}</h2>
           <Grid container spacing={1}>
             <Grid item xs={12} lg={12}>
-              {/* <TextField
+              <TextField
                 id="standard-basic"
-                label="CPF"
+                label="CPF do médico"
                 variant="standard"
                 inputProps={{ maxLength: 14 }}
                 fullWidth
@@ -122,14 +119,30 @@ export default function BasicModal({
                   const newValue = formatarCPF(event.target.value);
                   const error = validateCPF(newValue);
                   setError(error);
-                  handlerForm('cpf', newValue.replace(/[.-]/g, ''));
+                  handlerForm('cpf_medico', newValue.replace(/[.-]/g, ''));
                 }}
-                value={formatarCPF(getForm['cpf']) || ''}
+                value={formatarCPF(getForm['cpf_medico']) || ''}
                 error={Boolean(error)}
                 helperText={error}
-              /> */}
+              />
+              <TextField
+                id="standard-basic"
+                label="CPF do paciente"
+                variant="standard"
+                inputProps={{ maxLength: 14 }}
+                fullWidth
+                onChange={(event) => {
+                  const newValue = formatarCPF(event.target.value);
+                  const error = validateCPF(newValue);
+                  setError(error);
+                  handlerForm('cpf_paciente', newValue.replace(/[.-]/g, ''));
+                }}
+                value={formatarCPF(getForm['cpf_paciente']) || ''}
+                error={Boolean(error)}
+                helperText={error}
+              />
               <DatePicker
-                label="Data"
+                label="Data da consulta"
                 mask="__/__/____"
                 inputFormat="dd/MM/yyyy"
                 value={getForm['data'] || ''}
@@ -160,9 +173,8 @@ export default function BasicModal({
               />
               <TimePicker
                 label="Hora de término"
-                value={getForm['hora_termino'] ? new Date(`${getForm['data']} ${getForm['hora_termino']}`) : null}
+                value={getForm.agenda['hora_inicio'] ? new Date(`${getForm.agenda['data']} ${getForm['hora_termino']}`) : null}
                 onChange={(event) => handlerForm('hora_termino', format(new Date(event), 'HH:mm:ss'))}
-                disabled={!getForm['hora_inicio'].includes(':')}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -173,32 +185,6 @@ export default function BasicModal({
                   />
                 )}
               />
-              <FormControl fullWidth sx={{ marginTop: '10px' }}>
-                <InputLabel id="demo-simple-select-label">Médicos disponíveis</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Médicos disponíveis"
-                  onChange={(event) => handlerForm('cpf', event.target.value)}
-                >
-                  {(getData[1] ?? []).map((option, index) => (
-                    <MenuItem key={index} value={option?.cpf}>{option?.nome}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl fullWidth sx={{ marginTop: '10px' }}>
-                <InputLabel id="demo-simple-select-label">Agendas disponíveis</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Agendas disponíveis"
-                  onChange={(event) => handlerForm('agenda_id', event.target.value)}
-                >
-                  {(getData[0] ?? []).map((option, index) => (
-                    <MenuItem key={index} value={option?.id}>{option?.descricao}</MenuItem> 
-                  ))}
-                </Select>
-              </FormControl>
             </Grid>
             <Grid item>
               <Stack

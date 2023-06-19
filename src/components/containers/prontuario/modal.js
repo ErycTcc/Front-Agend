@@ -44,7 +44,6 @@ export default function BasicModal({
 }) {
   const handleOpen = () => setModal(true);
   const handleClose = () => {
-    if (isUpdate) destroyData();
     setUpdate(!isUpdate); setModal(false);
   };
   const [getForm, setForm] = useState(row);
@@ -143,7 +142,7 @@ export default function BasicModal({
                       <ArrowDownOnSquareIcon />
                     </SvgIcon>
                   )}
-                  onClick={handleClose}
+                  onClick={isUpdate ? destroyData : handleClose}
                 >
                   {isUpdate ? 'Excluir' : 'Cancelar'}
                 </Button>

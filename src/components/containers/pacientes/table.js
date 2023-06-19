@@ -12,6 +12,8 @@ import {
   TablePagination,
   TableRow,
 } from '@mui/material';
+import { formatarCPF } from 'src/libs/global/formatCPF';
+import { formatarNumeroCelular } from 'src/libs/global/formatPhone';
 import { Scrollbar } from 'src/components/scrollbar';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import { Columns } from './columns';
@@ -54,6 +56,14 @@ const CustomersTable = ({
                     key={index}
                     selected={isSelected}
                   >
+                    <TableCell align='center'>{formatarCPF(customer.cpf)}</TableCell>
+                    <TableCell align='center'>{customer.nome}</TableCell>
+                    <TableCell align='center'>{formatarNumeroCelular(customer.telefone)}</TableCell>
+                    <TableCell align='center'>{customer.genero}</TableCell>
+                    <TableCell align='center'>{customer.idade}</TableCell>
+                    <TableCell align='center'>{customer.peso}</TableCell>
+                    <TableCell align='center'>{customer.altura}</TableCell>
+                    <TableCell align='center'>{customer.cod_sus}</TableCell>
                     <TableCell align='center'>
                       <Button
                         color="inherit"

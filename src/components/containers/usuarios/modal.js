@@ -44,7 +44,6 @@ export default function BasicModal({
 }) {
   const handleOpen = () => setModal(true);
   const handleClose = () => {
-    if (isUpdate) destroyData();
     setUpdate(!isUpdate); setModal(false);
   };
   const [getForm, setForm] = useState(row);
@@ -159,7 +158,7 @@ export default function BasicModal({
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="Funções disponíveis"
-                  onChange={(event) => handlerForm('agenda_id', event.target.value)}
+                  onChange={(event) => handlerForm('tipo_usuarios_id', event.target.value)}
                 >
                   {getEspecialidades.map((option, index) => (
                     <MenuItem key={index} value={option?.id}>{option?.descricao}</MenuItem>
@@ -192,7 +191,7 @@ export default function BasicModal({
                       <ArrowDownOnSquareIcon />
                     </SvgIcon>
                   )}
-                  onClick={handleClose}
+                  onClick={isUpdate ? destroyData : handleClose}
                 >
                   {isUpdate ? 'Excluir' : 'Cancelar'}
                 </Button>

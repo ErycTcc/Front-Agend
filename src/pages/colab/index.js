@@ -1,6 +1,6 @@
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { DEFAULT } from 'src/libs/global/constants';
-import TableContainer from 'src/components/tableContainer';
+import TableContainer from 'src/components/containers/agendas_do_medico/container';
 
 const Page = () => (
   <TableContainer
